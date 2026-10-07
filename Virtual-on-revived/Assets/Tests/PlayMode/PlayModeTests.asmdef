@@ -1,0 +1,16 @@
+{
+    "name": "PlayModeTests",
+    "rootNamespace": "",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "EXCLUDE_FROM_COMPILATION"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

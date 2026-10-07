@@ -4,7 +4,7 @@ using UnityEngine.Pool;
 
 namespace Combat
 {
-    public class MachineGun : MonoBehaviour
+    public class MachineGun : WeaponBase
     {
         public event Action<int> OnAmmoChanged;
 
@@ -42,7 +42,7 @@ namespace Combat
             }
         }
 
-        public void Fire()
+        public override void Use()
         {
             if (Time.time >= nextFireTime && currentAmmo > 0)
             {

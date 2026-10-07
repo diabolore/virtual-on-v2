@@ -5,14 +5,14 @@ using UnityEngine.Events;
 public class MechHealth : MonoBehaviour
 {
     public float maxHealth = 1000f;
+    
+    // For code subscribers
     public event Action<float> OnHealthChanged;
-    public UnityEvent<float> OnHealthThresholdReached;
+    
+    // For inspector subscribers (like ModularArmorDetacher)
+    public UnityEvent<float> OnDamageTakenRatio;
 
     private float _currentHealth;
-    
-    private bool _passed75 = false;
-    private bool _passed50 = false;
-    private bool _passed25 = false;
 
     private void Awake()
     {
@@ -21,31 +21,14 @@ public class MechHealth : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
+        if (_currentHealth <= 0) return;
+
         _currentHealth -= damage;
         _currentHealth = Mathf.Max(0, _currentHealth);
 
-        OnHealthChanged?.Invoke(_currentHealth / maxHealth);
-        CheckThresholds();
-    }
-    
-    private void CheckThresholds()
-    {
         float ratio = _currentHealth / maxHealth;
         
-        if (ratio <= 0.75f && !_passed75)
-        {
-            _passed75 = true;
-            OnHealthThresholdReached?.Invoke(0.75f);
-        }
-        if (ratio <= 0.50f && !_passed50)
-        {
-            _passed50 = true;
-            OnHealthThresholdReached?.Invoke(0.50f);
-        }
-        if (ratio <= 0.25f && !_passed25)
-        {
-            _passed25 = true;
-            OnHealthThresholdReached?.Invoke(0.25f);
-        }
+        OnHealthChanged?.Invoke(ratio);
+        OnDamageTakenRatio?.Invoke(ratio);
     }
 }

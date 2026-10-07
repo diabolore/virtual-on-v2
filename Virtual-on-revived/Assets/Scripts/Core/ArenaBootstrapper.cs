@@ -4,29 +4,39 @@ namespace VirtualOnRevived.Core
 {
     public class ArenaBootstrapper : MonoBehaviour
     {
-        [SerializeField] private GameObject buildingPrefab;
-        [SerializeField] private int gridSize = 5;
-        [SerializeField] private float spacing = 20f;
+        [Header("Gravity Settings")]
+        [SerializeField] private bool overrideGravity = false;
+        [SerializeField] private Vector3 customGravity = new Vector3(0f, -4.905f, 0f);
 
-        private void Start()
+        [Header("Arena Boundaries")]
+        [SerializeField] private Vector3 arenaBoundsSize = new Vector3(120f, 30f, 120f);
+        [SerializeField] private Vector3 arenaBoundsCenter = new Vector3(0f, 15f, 0f);
+        [SerializeField] private bool drawBoundaryGizmos = true;
+
+        private Vector3 _defaultGravity;
+        private bool _gravityOverridden = false;
+
+        public bool OverrideGravity => overrideGravity;
+        public Vector3 CustomGravity => customGravity;
+
+        private void Awake()
         {
-            GenerateCityBlocks();
+            _defaultGravity = Physics.gravity;
+
+            if (overrideGravity)
+            {
+                Physics.gravity = customGravity;
+                _gravityOverridden = true;
+            }
+
             ConfigurePhysicsMatrix();
         }
 
-        private void GenerateCityBlocks()
+        private void OnDestroy()
         {
-            if (buildingPrefab == null) return;
-
-            Vector3 startPos = new Vector3(-gridSize * spacing / 2f, 0, -gridSize * spacing / 2f);
-
-            for (int x = 0; x < gridSize; x++)
+            if (_gravityOverridden)
             {
-                for (int z = 0; z < gridSize; z++)
-                {
-                    Vector3 position = startPos + new Vector3(x * spacing, 0, z * spacing);
-                    Instantiate(buildingPrefab, position, Quaternion.identity, transform);
-                }
+                Physics.gravity = _defaultGravity;
             }
         }
 
@@ -42,6 +52,14 @@ namespace VirtualOnRevived.Core
             {
                 Debug.LogWarning("Debris layer not found. Please add a 'Debris' layer in Project Settings -> Tags and Layers.");
             }
+        }
+
+        private void OnDrawGizmos()
+        {
+            if (!drawBoundaryGizmos) return;
+
+            Gizmos.color = new Color(0f, 0.8f, 1f, 0.35f);
+            Gizmos.DrawWireCube(transform.position + arenaBoundsCenter, arenaBoundsSize);
         }
     }
 }

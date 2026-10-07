@@ -1,36 +1,27 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class ModularArmorDetacher : MonoBehaviour
 {
-    [System.Serializable]
-    public struct ArmorPiece
+    private List<DetachableArmor> armorPieces = new List<DetachableArmor>();
+
+    private void Awake()
     {
-        public GameObject armorObject;
-        public float detachThreshold;
+        // Automatically discover all cosmetic armor pieces on the mech at startup
+        armorPieces.AddRange(GetComponentsInChildren<DetachableArmor>(true));
     }
 
-    public ArmorPiece[] armorPieces;
-
-    public void OnHealthThresholdReached(float threshold)
+    public void OnHealthChanged(float currentHealthRatio)
     {
-        foreach (var piece in armorPieces)
+        // Iterate backwards since we are removing elements from the list as they detach
+        for (int i = armorPieces.Count - 1; i >= 0; i--)
         {
-            if (piece.armorObject != null && Mathf.Approximately(piece.detachThreshold, threshold))
+            var piece = armorPieces[i];
+            if (piece != null && currentHealthRatio <= piece.detachThreshold)
             {
-                DetachArmor(piece.armorObject);
+                piece.Detach();
+                armorPieces.RemoveAt(i);
             }
-        }
-    }
-
-    private void DetachArmor(GameObject armor)
-    {
-        armor.transform.SetParent(null);
-        var rb = armor.GetComponent<Rigidbody>();
-        if (rb != null)
-        {
-            rb.isKinematic = false;
-            rb.AddForce(Random.onUnitSphere * 10f, ForceMode.Impulse);
-            rb.AddTorque(Random.onUnitSphere * 10f, ForceMode.Impulse);
         }
     }
 }

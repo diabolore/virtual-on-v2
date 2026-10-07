@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Combat
 {
-    public class LaserSword : MonoBehaviour
+    public class LaserSword : WeaponBase
     {
         [SerializeField] private float damage = 25f;
         [SerializeField] private float lungeRange = 15f;
@@ -18,7 +18,7 @@ namespace Combat
             rb = GetComponentInParent<Rigidbody>();
         }
 
-        public void Swing()
+        public override void Use()
         {
             if (isSwinging) return;
             isSwinging = true;

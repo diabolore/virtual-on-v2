@@ -4,22 +4,22 @@ namespace Combat
 {
     public class WeaponController : MonoBehaviour
     {
-        [SerializeField] private MachineGun machineGun;
-        [SerializeField] private LaserSword laserSword;
+        [SerializeField] private WeaponBase primaryWeapon;
+        [SerializeField] private WeaponBase secondaryWeapon;
 
         public void UsePrimaryAttack()
         {
-            if (machineGun != null)
+            if (primaryWeapon != null)
             {
-                machineGun.Fire();
+                primaryWeapon.Use();
             }
         }
 
         public void UseSecondaryAttack()
         {
-            if (laserSword != null)
+            if (secondaryWeapon != null)
             {
-                laserSword.Swing();
+                secondaryWeapon.Use();
             }
         }
     }
